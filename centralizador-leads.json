@@ -1,5 +1,6 @@
 {
   "name": "Demo centralizador de leads",
+  "active": false,
   "nodes": [
     {
       "parameters": {
@@ -40,7 +41,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-haiku-5-5\",\n  \"max_tokens\": 1024,\n  \"system\": \"Clasificas mensajes de clientes de un bar en una sola categoria: reserva, pregunta o queja. Responde SOLO con esa palabra, en minuscula, sin nada mas.\",\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"{{ $json.body.mensaje }}\"}\n  ]\n}",
+        "jsonBody": "={\n  \"model\": \"claude-haiku-5-5\",\n  \"max_tokens\": 1024,\n  \"system\": \"Clasificas mensajes de clientes de un bar en una sola categoria: reserva, pregunta o queja. Responde SOLO con esa palabra, en minuscula, sin nada mas.\",\n  \"messages\": [\n    {\"role\": \"user\", \"content\": {{ JSON.stringify($json.body.mensaje) }} }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -164,7 +165,6 @@
       "name": "Append row in sheet"
     }
   ],
-  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
@@ -200,7 +200,6 @@
       ]
     }
   },
-  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"

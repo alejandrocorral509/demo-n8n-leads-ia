@@ -41,9 +41,14 @@ Invoke-RestMethod -Method Post -Uri http://localhost:5678/webhook-test/lead-bar 
 ## Por qué
 Es una recreación, con un bar y clientes **inventados**, de un sistema real de centralización de leads que desarrollé en mis prácticas (con la API de Claude y MCP). Aquí lo monto con una herramienta no-code para enseñar el mismo concepto de forma sencilla.
 
+## Problemas que encontré y cómo los resolví
+- **Mensajes con comillas.** Si un cliente escribía `¿Tenéis la "tortilla de la abuela"?`, el nodo de Claude fallaba con *"The value in the JSON Body field is not valid JSON"*: el texto se metía tal cual dentro de unas comillas, y las comillas del cliente cerraban el texto antes de tiempo. Es el mismo problema de fondo que una inyección SQL: meter texto del usuario dentro de código sin escaparlo.
+  - Antes: `"content": "{{ $json.body.mensaje }}"`
+  - Ahora: `"content": {{ JSON.stringify($json.body.mensaje) }}` → `JSON.stringify` pone las comillas y escapa las de dentro.
+- **Mapeo de columnas perdido.** Al mover el flujo a otro equipo y volver a elegir la hoja, n8n borró qué dato va en cada columna y el último nodo fallaba (*"At least one value has to be added under 'Values to Send'"*). Lo detecté en el registro de la ejecución y lo resolví con **Map Each Column Manually**.
+
 ## Siguientes mejoras
 - Guardar la clave de Anthropic como **credencial de n8n** en vez de escribirla en el nodo.
-- Escapar el texto del mensaje antes de meterlo en el JSON, para que no falle si el cliente escribe comillas.
 - **Validar la respuesta** de la IA: si no es una de las tres categorías, marcarla como `revisar`.
 - Avisar por correo o WhatsApp cuando llegue una **queja**.
 
